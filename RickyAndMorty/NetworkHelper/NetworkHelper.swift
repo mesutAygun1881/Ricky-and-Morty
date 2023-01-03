@@ -16,29 +16,34 @@ enum HTTPMethods : String {
 }
 
 
+///url icin endpoint https://rickandmortyapi.com/api/character
 enum RMEndpoint : String {
     case character
     case location
     case episode
 }
 
+///errors
 enum ErrorTypes : String , Error {
     case invalidData = "Invalid Data"
     case invalidUrl = "Invalid URL"
     case generalError = "An error happened"
 }
 
+
 class NetworkHelper {
     
+    ///base url
     private struct Constants {
         static let baseUrl = "https://rickandmortyapi.com/api"
     }
     
     private let endPoint : RMEndpoint
-    private var pathComponents : [String] = []
+    private var pathComponents : [String]
     private let queryParameters : [URLQueryItem]
     public let httpMethod = "GET"
     
+    /// base url e endpoint ve varsa path ve query leri ekliyoruz
     private var urlString : String {
         var string = Constants.baseUrl
         string += "/"
@@ -79,20 +84,7 @@ class NetworkHelper {
     
     
 }
-
-
-
-// MARK: QUERIE EXTENSION
-
-extension URL {
-    func withQueries(_ queries : [String : String]) -> URL? {
-        var components = URLComponents(url: self, resolvingAgainstBaseURL: true)
-        components?.queryItems = queries.map {URLQueryItem(name: $0.0, value: $0.1)}
-        return components?.url
-    }
-}
-
-
+// bu extension ile .character veya .episode direk ulasiyoruz
 extension NetworkHelper {
     static let listCharactersRequest = NetworkHelper(endPoint : .character)
 }

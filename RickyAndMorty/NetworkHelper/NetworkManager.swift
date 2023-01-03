@@ -16,7 +16,7 @@ class NetworkManager{
     
     
    
-    // MARK: GET
+    // MARK: GET EXECUTE GENERIC TYPE
     func execute<T: Codable>(_ request : NetworkHelper , type : T.Type ,  completion : @escaping((Result<T, ErrorTypes>)->())){
         guard let request = self.request(from: request) else {
             completion(.failure(ErrorTypes.invalidUrl))
@@ -31,10 +31,13 @@ class NetworkManager{
                 let result = try JSONDecoder().decode(type.self, from: data)
                 completion(.success(result))
             }catch{
+                print(error.localizedDescription)
                 completion(.failure(ErrorTypes.generalError))
             }
             
-        }.resume()
+        }
+        
+        task.resume()
        
             
     }
@@ -80,10 +83,14 @@ class NetworkManager{
     }
     
     
+    
+    // request icin url ve methodlari tanimliyoruz varsa post icin param i burada tanimlariz
     private func request(from rmRequest : NetworkHelper) -> URLRequest? {
         guard let url = rmRequest.url else {return nil}
+        print(url)
         var request = URLRequest(url: url)
         request.httpMethod = rmRequest.httpMethod
+        
         return request
     }
 }

@@ -12,27 +12,31 @@ class RMCharacterViewController: UIViewController {
 
     // MARK: PROPERTIES
     
+    /// bu view icerisinde gerekli collectionview ayarlamalari yapildi
+    let characterListView = CharacterListView()
     
     // MARK: FUNCTIONS
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "Characters"
-        // Do any additional setup after loading the view.
-        
-        let request = NetworkHelper(endPoint: .character, queryParameters: [URLQueryItem(name: "name", value: "rick")])
-      
-        
-        NetworkManager.shared.execute(request, type: RMCharacter.self) { result in
-            switch result {
-            case .success :
-                break
-            case .failure(let error):
-                print(String(describing: error))
-            }
-        }
+       setUpView()
     }
     
+    private func setUpView(){
+        view.addSubview(characterListView)
+        addConstraints()
+    }
+    
+    private func addConstraints(){
+        NSLayoutConstraint.activate([
+            characterListView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            characterListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            characterListView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            characterListView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor)
+        ])
+    }
+
 
   
 
