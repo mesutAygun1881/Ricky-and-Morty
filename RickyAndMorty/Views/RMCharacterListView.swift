@@ -7,8 +7,17 @@
 
 import UIKit
 
-final class CharacterListView: UIView {
+protocol RMCharacterListViewDelegate : AnyObject {
+    func rmCharacterListView(_ characterListView : RMCharacterListView , didSelectCharacter character : RMCharacter)
+}
 
+final class RMCharacterListView: UIView {
+    
+    
+    // MARK: PROPERTIES
+    
+    private let viewmodel = RMCharacterListViewModel()
+    public weak var delegate : RMCharacterListViewDelegate?
     // MARK: UI ELEMENTS
     
     private let spinner : UIActivityIndicatorView = {
@@ -22,19 +31,16 @@ final class CharacterListView: UIView {
     private let collectionView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 15, right: 10)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.isHidden = true
         collectionView.alpha = 0
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(RMCharacterListCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterListCollectionViewCell.identifier)
         return collectionView
         
     }()
-    
-    // MARK: PROPERTIES
-    
-    private let viewmodel = CharacterListViewModel()
+   
     
     
     // MARK: FUNCTIONS
@@ -54,6 +60,7 @@ final class CharacterListView: UIView {
         addConstraints()
         spinner.startAnimating()
         setUpCollectionView()
+        viewmodel.delegate = self
         viewmodel.fetchCharacters()
     }
     
@@ -76,14 +83,27 @@ final class CharacterListView: UIView {
     private func setUpCollectionView(){
         collectionView.dataSource = viewmodel
         collectionView.delegate = viewmodel
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2){
-            self.spinner.stopAnimating()
-            
-            self.collectionView.isHidden = false
-            
-            UIView.animate(withDuration: 0.4) {
-                self.collectionView.alpha = 1
-            }
+    }
+}
+
+
+extension RMCharacterListView : RMCharacterListViewModelDelegate {
+    
+    // collection icinde didselectte delegate ile characteri aldik character controllere gondormek uzere veriyi tasidik
+    func didSelectCharacter(_ character: RMCharacter) {
+        self.delegate?.rmCharacterListView(self, didSelectCharacter: character)
+    }
+    
+    func didLoadInitialCharacters() {
+        collectionView.reloadData()
+        self.spinner.stopAnimating()
+        
+        self.collectionView.isHidden = false
+        
+        UIView.animate(withDuration: 0.4) {
+            self.collectionView.alpha = 1
         }
     }
+    
+    
 }

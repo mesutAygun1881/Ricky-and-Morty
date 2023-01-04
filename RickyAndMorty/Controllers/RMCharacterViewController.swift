@@ -8,12 +8,16 @@
 import UIKit
 
 class RMCharacterViewController: UIViewController {
-    // MARK: UI ELEMENTS
-
+   
     // MARK: PROPERTIES
     
     /// bu view icerisinde gerekli collectionview ayarlamalari yapildi
-    let characterListView = CharacterListView()
+    let characterListView = RMCharacterListView()
+    
+    
+    // MARK: UI ELEMENTS
+
+    
     
     // MARK: FUNCTIONS
     override func viewDidLoad() {
@@ -25,6 +29,7 @@ class RMCharacterViewController: UIViewController {
     
     private func setUpView(){
         view.addSubview(characterListView)
+        characterListView.delegate = self
         addConstraints()
     }
     
@@ -37,7 +42,18 @@ class RMCharacterViewController: UIViewController {
         ])
     }
 
-
+   
   
 
+}
+
+extension RMCharacterViewController :  RMCharacterListViewDelegate  {
+    // delegate function
+    func rmCharacterListView(_ characterListView: RMCharacterListView, didSelectCharacter character: RMCharacter) {
+        // open detail screen for character
+        
+        let viewModel = RMCharacterDetailViewModel(character: character)
+        let detailVC = RMCharacterDetailViewController(viewModel: viewModel)
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
 }
