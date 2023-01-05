@@ -7,17 +7,18 @@
 
 import UIKit
 
-protocol RMCharacterListViewDelegate : AnyObject {
-    func rmCharacterListView(_ characterListView : RMCharacterListView , didSelectCharacter character : RMCharacter)
+protocol RMCharacterUIViewDelegate : AnyObject {
+    //bu protokol ile secilen karakteri ve ui view i aliyoruz
+    func rmCharacterListView(_ characterListView : RMCharacterUIView , didSelectCharacter character : RMCharacter)
 }
 
-final class RMCharacterListView: UIView {
+final class RMCharacterUIView: UIView {
     
     
     // MARK: PROPERTIES
     
-    private let viewmodel = RMCharacterListViewModel()
-    public weak var delegate : RMCharacterListViewDelegate?
+    private let viewmodel = RMCharacterViewModel()
+    public weak var delegate : RMCharacterUIViewDelegate?
     // MARK: UI ELEMENTS
     
     private let spinner : UIActivityIndicatorView = {
@@ -36,7 +37,9 @@ final class RMCharacterListView: UIView {
         collectionView.isHidden = true
         collectionView.alpha = 0
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.register(RMCharacterListCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterListCollectionViewCell.identifier)
+        collectionView.register(RMCharacterCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterCollectionViewCell.identifier)
+        ///for pagination RMFooterLoadingCollectionReusableView olusturuldu icerisinde spinner var registerdan sonra methodlarini  viewModel icerisinde collection funclari icinde yazdik
+        collectionView.register(RMFooterLoadingCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: RMFooterLoadingCollectionReusableView.identifier)
         return collectionView
         
     }()
@@ -87,7 +90,8 @@ final class RMCharacterListView: UIView {
 }
 
 
-extension RMCharacterListView : RMCharacterListViewModelDelegate {
+// bu extension da RMCharacterListViewModel icerisindeki protokoller ile controllere veriyi ilettik
+extension RMCharacterUIView : RMCharacterViewModelDelegate {
     
     // collection icinde didselectte delegate ile characteri aldik character controllere gondormek uzere veriyi tasidik
     func didSelectCharacter(_ character: RMCharacter) {
@@ -105,5 +109,9 @@ extension RMCharacterListView : RMCharacterListViewModelDelegate {
         }
     }
     
-    
+    func didLoadMoreCharacter(with newIndexPaths : [IndexPath]) {
+        collectionView.performBatchUpdates {
+            self.collectionView.insertItems(at: newIndexPaths)
+        }
+    }
 }

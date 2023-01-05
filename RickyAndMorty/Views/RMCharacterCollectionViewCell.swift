@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RMCharacterListCollectionViewCell: UICollectionViewCell {
+class RMCharacterCollectionViewCell: UICollectionViewCell {
     
     
     // MARK: PROPERTIES

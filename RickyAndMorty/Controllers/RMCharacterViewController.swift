@@ -12,7 +12,7 @@ class RMCharacterViewController: UIViewController {
     // MARK: PROPERTIES
     
     /// bu view icerisinde gerekli collectionview ayarlamalari yapildi
-    let characterListView = RMCharacterListView()
+    let characterListView = RMCharacterUIView()
     
     
     // MARK: UI ELEMENTS
@@ -47,9 +47,10 @@ class RMCharacterViewController: UIViewController {
 
 }
 
-extension RMCharacterViewController :  RMCharacterListViewDelegate  {
+// MARK: bu delegate collection cell icerisinde detail screene gitmek icin protokoller kullanildi
+extension RMCharacterViewController :  RMCharacterUIViewDelegate  {
     // delegate function
-    func rmCharacterListView(_ characterListView: RMCharacterListView, didSelectCharacter character: RMCharacter) {
+    func rmCharacterListView(_ characterListView: RMCharacterUIView, didSelectCharacter character: RMCharacter) {
         // open detail screen for character
         
         let viewModel = RMCharacterDetailViewModel(character: character)
